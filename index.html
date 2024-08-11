@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fake News Detector</title>
+<style>
+     body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: url('https://st.depositphotos.com/1032463/1373/i/950/depositphotos_13732950-stock-photo-background-of-old-vintage-newspapers.jpg') no-repeat center center fixed; /* Replace with your background image URL */
+        background-size: cover;
+    }
+    .container {
+        background: linear-gradient(135deg, #e0e0e0 0%, #b0b0b0 50%, #808080 100%); /* Grayscale gradient background */
+        border-radius: 16px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        padding: 100px; /* Increased padding */
+        width: 100%;
+        max-width: 600px; /* Increased max-width */
+        text-align: center;
+        position: relative;
+        color: #333;
+    }
+    h1 {
+        color: #003366; /* Dark blue color */
+        font-size: 2em;
+        margin-bottom: 20px;
+    }
+    label {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 8px;
+    }
+    textarea {
+        width: 100%;
+        padding: 15px;
+        margin-top: 8px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        resize: vertical;
+        font-size: 16px;
+    }
+    button {
+        background-color: #00bfa6;
+        color: #fff;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 8px;
+        cursor: pointer;
+        margin-top: 20px;
+        font-size: large;
+        transition: background-color 0.3s ease, transform 0.2s;
+    }
+    button:hover {
+        background-color: #00796b;
+        transform: scale(1.05);
+    }
+    #response {
+        margin-top: 20px;
+        font-weight: bold;
+    }
+    #loading {
+        display: none;
+        margin-top: 20px;
+        font-weight: bold;
+        color: #00796b;
+    }
+</style>
+</head>
+<body>
+    <div class="container">
+        <h1>Fake News Detector</h1>
+        <label for="newsInput">Enter the news:</label>
+        <textarea id="newsInput" rows="8" cols="50" placeholder="Paste the news content here..."></textarea>
+        <button onclick="checkNews()">Check</button>
+        <div id="loading">Checking...</div>
+        <div id="response"></div>
+    </div>
+
+    <script>
+        function checkNews() {
+            var news = document.getElementById('newsInput').value;
+            var responseElement = document.getElementById('response');
+            var loadingElement = document.getElementById('loading');
+            
+            if (news.trim() === '') {
+                responseElement.innerText = 'Please enter some news text.';
+                return;
+            }
+
+            responseElement.innerText = '';
+            loadingElement.style.display = 'block';
+            
+            // Send AJAX request to Flask
+            fetch('/check_news', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'news=' + encodeURIComponent(news)
+            })
+            .then(response => response.json())
+            .then(data => {
+                loadingElement.style.display = 'none';
+                responseElement.innerText = data.result;
+            })
+            .catch(error => {
+                loadingElement.style.display = 'none';
+                responseElement.innerText = 'An error occurred. Please try again.';
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>
