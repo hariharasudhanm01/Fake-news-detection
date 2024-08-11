@@ -1,0 +1,22 @@
+<script>
+    function checkNews() {
+        var news = document.getElementById('newsInput').value;
+        var responseElement = document.getElementById('response');
+
+        // Send AJAX request to Flask
+        fetch('/check_news', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'news=' + encodeURIComponent(news)
+        })
+        .then(response => response.json())
+        .then(data => {
+            responseElement.innerText = data.result;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+</script>
